@@ -5,21 +5,30 @@ using UnityEngine.AI;
 
 public class EnemyPlayer : MonoBehaviour
 {
-    
-    public Transform player; // Reference to the player GameObject
+     public Transform player; // Reference to the player GameObject
     public Transform ammunitionStore; // Reference to the ammunition store GameObject
     public Transform restaurant; // Reference to the restaurant GameObject
     private NavMeshAgent navMeshAgent; // Reference to the NavMeshAgent component
+
+    // Enum to define the possible destinations
+    public enum Destination
+    {
+        Player,
+        AmmunitionStore,
+        Restaurant
+    }
+    public Destination currentDestination; // Current destination the enemy is heading towards
 
     void Start()
     {
         // Get the NavMeshAgent component attached to the same GameObject as this script
         navMeshAgent = GetComponent<NavMeshAgent>();
 
-        // Call the method to visit all destinations
-        VisitAllDestinations();
+        // Start by visiting the player
+        VisitPlayer();
     }
 
+    // Method to visit the player
     public void VisitPlayer()
     {
         // Check if the player reference is set
@@ -27,13 +36,15 @@ public class EnemyPlayer : MonoBehaviour
         {
             // Set the destination for the NavMeshAgent to the player's position
             navMeshAgent.SetDestination(player.position);
+            currentDestination = Destination.Player; // Update the current destination
         }
         else
         {
-            Debug.LogError("Player reference is not set in EnemyPlayer script!");
+            Debug.LogError("Player reference is not set in EnemyMovement script!");
         }
     }
 
+    // Method to visit the ammunition store
     public void VisitAmmunitionStore()
     {
         // Check if the ammunition store reference is set
@@ -41,13 +52,15 @@ public class EnemyPlayer : MonoBehaviour
         {
             // Set the destination for the NavMeshAgent to the ammunition store's position
             navMeshAgent.SetDestination(ammunitionStore.position);
+            currentDestination = Destination.AmmunitionStore; // Update the current destination
         }
         else
         {
-            Debug.LogError("Ammunition Store reference is not set in EnemyPlayer script!");
+            Debug.LogError("Ammunition Store reference is not set in EnemyMovement script!");
         }
     }
 
+    // Method to visit the restaurant
     public void VisitRestaurant()
     {
         // Check if the restaurant reference is set
@@ -55,38 +68,32 @@ public class EnemyPlayer : MonoBehaviour
         {
             // Set the destination for the NavMeshAgent to the restaurant's position
             navMeshAgent.SetDestination(restaurant.position);
+            currentDestination = Destination.Restaurant; // Update the current destination
         }
         else
         {
-            Debug.LogError("Restaurant reference is not set in EnemyPlayer script!");
+            Debug.LogError("Restaurant reference is not set in EnemyMovement script!");
         }
     }
 
-    public void VisitAllDestinations()
+    // OnTriggerEnter is called when the Collider other enters the trigger zone of this GameObject
+    void OnTriggerEnter(Collider other)
     {
-        // Visit each destination sequentially
-        VisitPlayer();
-        WaitForDestinationReached(); // Wait for player destination to be reached before proceeding to the next destination
-
-        VisitAmmunitionStore();
-        WaitForDestinationReached(); // Wait for ammunition store destination to be reached before proceeding to the next destination
-
-        VisitRestaurant();
-        WaitForDestinationReached(); // Wait for restaurant destination to be reached
-    }
-
-    private void WaitForDestinationReached()
-    {
-        // Wait until the NavMeshAgent has reached its destination
-        while (navMeshAgent.pathPending || navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance)
+        // Check the last visited destination to determine the next destination
+        switch (currentDestination)
         {
-            // Wait until the agent has reached the destination
+            case Destination.Player:
+                VisitAmmunitionStore();
+                break;
+            case Destination.AmmunitionStore:
+                VisitRestaurant();
+                break;
+            case Destination.Restaurant:
+                VisitPlayer();
+                break;
+            default:
+                Debug.LogError("Invalid destination!");
+                break;
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Additional logic can be added here if needed
     }
 }

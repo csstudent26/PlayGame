@@ -7,14 +7,17 @@ TagManager:
   - Ammunition Store
   - AmmunitionStore
   - Resturant
+  - Hotel
+  - Peoples Centre
+  - Temple
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - EnemyLayer
   - Water
   - UI
-  - 
+  - PlayerLayer
   - 
   - 
   - 
@@ -43,4 +46,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: EnemyLayer
+    uniqueID: 163100777
     locked: 0
