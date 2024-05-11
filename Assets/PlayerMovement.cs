@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,8 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform temple; // Reference to the temple GameObject
     public Transform peoplesCentre; // Reference to the people's center GameObject
     public Transform hotel; // Reference to the hotel GameObject
-    private NavMeshAgent navMeshAgent; // Reference to the NavMeshAgent component
-
+    public NavMeshAgent navMeshAgent; // Reference to the NavMeshAgent component
+    public GameManager gameManager;
     // Enum to define the possible destinations
     public enum Destination
     {
@@ -80,7 +81,23 @@ public class PlayerMovement : MonoBehaviour
 
     // OnTriggerEnter is called when the Collider other enters the trigger zone of this GameObject
     void OnTriggerEnter(Collider other)
-    {
+    {   
+          // Check if the collider belongs to one of the specific buildings
+        if (other.CompareTag("Temple") || other.CompareTag("Peoples Centre") || other.CompareTag("Hotel"))
+        {
+            // Increase player score by 3 if the player reaches a specific building
+            if (gameManager != null)
+            {
+                gameManager.IncreasePlayerScore(3);
+            }
+            else
+            {
+                Debug.LogError("GameManager not found in the scene!");
+            }
+        }
+            // Check if the collider belongs to one of the specific buildings
+       
+
         // Check the last visited destination to determine the next destination
         switch (currentDestination)
         {
@@ -92,6 +109,8 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Destination.Hotel:
                 // You can add additional logic here if needed, or you can loop back to the temple
+               // break;
+                 VisitPeoplesCentre();
                 break;
             default:
                 Debug.LogError("Invalid destination!");

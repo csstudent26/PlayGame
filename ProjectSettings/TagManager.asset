@@ -10,6 +10,7 @@ TagManager:
   - Hotel
   - Peoples Centre
   - Temple
+  - Game Manager
   layers:
   - Default
   - TransparentFX

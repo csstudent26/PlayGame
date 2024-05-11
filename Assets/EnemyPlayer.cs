@@ -5,10 +5,11 @@ using UnityEngine.AI;
 
 public class EnemyPlayer : MonoBehaviour
 {
-     public Transform player; // Reference to the player GameObject
+    public Transform player; // Reference to the player GameObject
     public Transform ammunitionStore; // Reference to the ammunition store GameObject
     public Transform restaurant; // Reference to the restaurant GameObject
-    private NavMeshAgent navMeshAgent; // Reference to the NavMeshAgent component
+    public NavMeshAgent navMeshAgent; // Reference to the NavMeshAgent component
+    public GameManager gameManager; // Reference to the PlayerManager
 
     // Enum to define the possible destinations
     public enum Destination
@@ -78,7 +79,19 @@ public class EnemyPlayer : MonoBehaviour
 
     // OnTriggerEnter is called when the Collider other enters the trigger zone of this GameObject
     void OnTriggerEnter(Collider other)
-    {
+    {    // Check if the collider belongs to the player
+        if (other.CompareTag("Player"))
+        {
+            // Increase enemy score when enemy reaches the player
+            if (gameManager != null)
+            {
+                gameManager.IncreaseEnemyScore(1);
+            }
+            else
+            {
+                Debug.LogError("PlayerManager not found in the scene!");
+            }
+        }
         // Check the last visited destination to determine the next destination
         switch (currentDestination)
         {
